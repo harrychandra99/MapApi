@@ -11,7 +11,7 @@ struct WeatherMapper {
     
     static func map(dto: WeatherDTO) -> Weather {
         
-        let celciusValue = Int(dto.main.temp - 273.15)
+        let celciusValue = Int((dto.main.temp - 273.15).rounded())
         let tempString = "\(celciusValue)°C"
         
         let firstWeather = dto.weather.first
