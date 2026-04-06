@@ -11,7 +11,7 @@ struct Constant {
     struct API {
         static let baseUrl = "https://api.openweathermap.org"
         static let path = "data/2.5/weather"
-        static let apiKey = "97dfebc5b669ff4bbe7a89f206f318a7"
+        
     }
     
     enum WeatherIcon: String {
