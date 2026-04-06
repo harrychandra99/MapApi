@@ -9,21 +9,37 @@ import SwiftUI
 
 struct WeatherViewController: View {
     
-    @State private var searchText = ""
-//    @State private var items = ["Jakarta", "Banana", "Cherry", "Date", "Elderberry"]
-//    
-//    var searchResults: [String] {
-//        if searchText.isEmpty {
-//            return items
-//        } else {
-//            return items.filter { $0.contains(searchText) }
-//        }
-//    }
-//    
+    @State var searchText = ""
+    @StateObject var adapter = WeatherViewAdapter()
+    
+    var presenter: WeatherPresenterProtocol?
+    
     var body: some View {
         NavigationStack {
-            Text("Konten Utama Di Sini") // Placeholder agar layar tidak kosong
-            
+            ZStack{
+                VStack{
+                    Text(adapter.cityName)
+                        .font(.largeTitle)
+                        .bold()
+                    
+                    Text(adapter.temperature)
+                        .font(.system(size: 70))
+                        .fontWeight(.thin)
+                    
+                    Text(adapter.condition)
+                        .font(.title3)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
+                .padding()
+                
+                if adapter.isLoading {
+                    ProgressView("Fetching Weather...")
+                        .padding()
+                        .background(Color.white.opacity(0.8))
+                        .cornerRadius(10)
+                }
+            }
             
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
