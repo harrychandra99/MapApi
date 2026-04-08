@@ -24,7 +24,7 @@ struct WeatherMapper {
         let idWeather = firstWeather?.id ?? 0
         let mainWeather = firstWeather?.main.capitalized ?? "No Weather"
         let descriptionWeather = firstWeather?.description.capitalized ?? "No Description"
-        let iconCodeWeather = getSystemIcon(from: firstWeather?.icon ?? "")
+        let iconCodeWeather = getWeatherIcon(from: firstWeather?.icon ?? "")
         
         let latitude = dto.coord.lat
         let longtitude = dto.coord.lon
@@ -44,7 +44,7 @@ struct WeatherMapper {
         )
     }
     
-    private static func getSystemIcon(from code: String) -> String {
+    private static func getWeatherIcon(from code: String) -> String {
         switch code {
         case "01d":
             return Constant.WeatherIcon.sun.rawValue
