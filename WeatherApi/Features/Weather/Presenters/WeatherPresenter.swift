@@ -7,10 +7,11 @@
 
 import Foundation
 
+@MainActor
 protocol WeatherPresenterProtocol: ObservableObject {
     
-    var cityName: String { get }
-    var temperature: String { get }
+    var weather: WeatherEntity? {get}
+    
     var isLoading: Bool { get }
     var errorMessage: String? { get }
     
@@ -20,8 +21,8 @@ protocol WeatherPresenterProtocol: ObservableObject {
 @MainActor
 class WeatherPresenter: WeatherPresenterProtocol{
     
-    @Published var cityName: String = ""
-    @Published var temperature: String = "--"
+    @Published var weather: WeatherEntity?
+    
     @Published var isLoading: Bool = false
     @Published var errorMessage: String? = nil
     
@@ -40,16 +41,14 @@ class WeatherPresenter: WeatherPresenterProtocol{
             do {
                 let dto = try await service.fetchWeathers(lat: lat, lon: lon)
                 
-                let weatherDTO = WeatherMapper.map(dto: dto)
+                let mappedResult = WeatherMapper.map(dto: dto)
                 
-                self.cityName = weatherDTO.cityName
-                self.temperature = weatherDTO.temperature
+                self.weather = mappedResult
                 self.isLoading = false
-                
-                }
             } catch {
+                self.errorMessage = "Failed to Load Data: \(error.localizedDescription)"
                 self.isLoading = false
-                print("Error: \(error)")
+                
             }
         }
     }
