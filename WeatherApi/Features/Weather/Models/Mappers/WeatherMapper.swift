@@ -9,21 +9,38 @@ import Foundation
 
 struct WeatherMapper {
     
-    static func map(dto: WeatherDTO) -> Weather {
+    static func map(dto: WeatherDTO) -> WeatherEntity {
         
-        let celciusValue = Int((dto.main.temp - 273.15).rounded())
-        let tempString = "\(celciusValue)°C"
+        let idCity = dto.id
+        let cityName = dto.name
+        let timeZone = dto.timeZone
+        
+        let currentTemperature = dto.main.temp.toCelsius()
+        let minTemperature = dto.main.tempMin.toCelsius()
+        let maxTemperature = dto.main.tempMax.toCelsius()
         
         let firstWeather = dto.weather.first
-        let description = firstWeather?.description.capitalized ?? "No Description"
         
-        let iconName = getSystemIcon(from: firstWeather?.icon ?? "")
+        let idWeather = firstWeather?.id ?? 0
+        let mainWeather = firstWeather?.main.capitalized ?? "No Weather"
+        let descriptionWeather = firstWeather?.description.capitalized ?? "No Description"
+        let iconCodeWeather = getSystemIcon(from: firstWeather?.icon ?? "")
         
-        return Weather(
-            cityName: dto.name,
-            temperature: tempString,
-            description: description,
-            iconURL: iconName
+        let latitude = dto.coord.lat
+        let longtitude = dto.coord.lon
+        
+        return WeatherEntity(
+            id: idWeather,
+            cityName: cityName,
+            temperatureCurrent: currentTemperature,
+            temperatureMin: minTemperature,
+            temperatureMax: maxTemperature,
+            idWeather: idWeather,
+            mainWeather: mainWeather,
+            descriptionWeather: descriptionWeather,
+            iconCodeWeather: iconCodeWeather,
+            latitude: latitude,
+            longtitude: longtitude
         )
     }
     

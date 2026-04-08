@@ -11,6 +11,7 @@ struct WeatherDTO: Decodable {
     let weather: [WeatherInfoDTO]
     let main: MainDTO
     let timeZone: Int
+    let id: Int
     let name: String
 }
 

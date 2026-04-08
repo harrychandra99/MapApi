@@ -10,30 +10,29 @@ import SwiftUI
 struct WeatherViewController: View {
     
     @State var searchText = ""
-    @StateObject var adapter = WeatherViewAdapter()
     
-    var presenter: WeatherPresenterProtocol?
+    @StateObject var presenter: WeatherPresenterProtocol?
     
     var body: some View {
         NavigationStack {
             ZStack{
                 VStack{
-                    Text(adapter.cityName)
+                    Text(presenter.cityName)
                         .font(.largeTitle)
                         .bold()
                     
-                    Text(adapter.temperature)
+                    Text(presenter.temperature)
                         .font(.system(size: 70))
                         .fontWeight(.thin)
                     
-                    Text(adapter.condition)
+                    Text(presenter.condition)
                         .font(.title3)
                         .foregroundColor(.secondary)
                     Spacer()
                 }
                 .padding()
                 
-                if adapter.isLoading {
+                if presenter.isLoading {
                     ProgressView("Fetching Weather...")
                         .padding()
                         .background(Color.white.opacity(0.8))
