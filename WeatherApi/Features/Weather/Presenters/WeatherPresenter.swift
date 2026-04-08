@@ -7,38 +7,49 @@
 
 import Foundation
 
-class WeatherPresenter: WeatherPresenterProtocol {
+protocol WeatherPresenterProtocol: ObservableObject {
     
-    weak var view: WeatherViewProtocol?
-    private let service: WeatherServiceProtocol
+    var cityName: String { get }
+    var temperature: String { get }
+    var isLoading: Bool { get }
+    var errorMessage: String? { get }
     
-    init(service: WeatherServiceProtocol) {
+    func fetchData(lat: Double, lon:Double)
+}
+
+@MainActor
+class WeatherPresenter: WeatherPresenterProtocol{
+    
+    @Published var cityName: String = ""
+    @Published var temperature: String = "--"
+    @Published var isLoading: Bool = false
+    @Published var errorMessage: String? = nil
+    
+    private let service: WeatherService
+    
+    init(service: WeatherService) {
         self.service = service
-    }
-    
-    func viewDidLoad() {
-        fetchData(lat: -6.2, lon: 106.8)
     }
     
     func fetchData(lat: Double, lon: Double) {
         
-        view?.showLoading()
+        isLoading = true
+        errorMessage = nil
         
         Task {
             do {
                 let dto = try await service.fetchWeathers(lat: lat, lon: lon)
                 
-                let weatherData = WeatherMapper.map(dto: dto)
+                let weatherDTO = WeatherMapper.map(dto: dto)
                 
-                await MainActor.run {
-                    view?.hideLoading()
-                    view?.display(weather: weatherData)
+                self.cityName = weatherDTO.cityName
+                self.temperature = weatherDTO.temperature
+                self.isLoading = false
+                
                 }
             } catch {
-                await MainActor.run {
-                    view?.hideLoading()
-                    view?.showError("Gagal Fetch Api: \(error.localizedDescription)")
-                }
+                self.isLoading = false
+                print("Error: \(error)")
             }
         }
     }
