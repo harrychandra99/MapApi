@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct Constant {
-    struct API {
+enum Constant {
+    enum API {
         static let baseUrl = "https://api.openweathermap.org"
         static let path = "data/2.5/weather"
         

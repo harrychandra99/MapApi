@@ -11,6 +11,10 @@ class NetworkManager {
     static let shared = NetworkManager()
     private let decoder = JSONDecoder()
     
+    private init() {
+        
+    }
+    
     func loadAPI<T: Decodable>(urlString: String) async throws -> T {
         
         guard let url = URL(string: urlString) else {

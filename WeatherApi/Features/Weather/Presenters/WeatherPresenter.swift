@@ -8,24 +8,18 @@
 import Foundation
 
 @MainActor
-protocol WeatherPresenterProtocol: ObservableObject {
+protocol WeatherViewProtocol: AnyObject {
     
-    var weather: WeatherEntity? {get}
-    
-    var isLoading: Bool { get }
-    var errorMessage: String? { get }
-    
-    func fetchData(lat: Double, lon:Double)
+    func showLoading()
+    func hideLoading()
+    func displayData(_ weather: WeatherEntity)
+    func displayError(_ message: String)
 }
 
 @MainActor
-class WeatherPresenter: WeatherPresenterProtocol{
+class WeatherPresenter{
     
-    @Published var weather: WeatherEntity?
-    
-    @Published var isLoading: Bool = false
-    @Published var errorMessage: String? = nil
-    
+    weak var view: WeatherViewProtocol?
     private let service: WeatherService
     
     init(service: WeatherService) {
@@ -34,26 +28,23 @@ class WeatherPresenter: WeatherPresenterProtocol{
     
     func fetchData(lat: Double, lon: Double) {
         
-        isLoading = true
-        errorMessage = nil
+        view?.showLoading()
         
         Task {
             do {
                 let dto = try await service.fetchWeathers(lat: lat, lon: lon)
-                
                 let mappedResult = WeatherMapper.map(dto: dto)
                 
-                self.weather = mappedResult
-                self.isLoading = false
+                view?.displayData(mappedResult)
+                view?.hideLoading()
                 
-                print(dto)
-                print(mappedResult)
+                //print(dto)
+                //print(mappedResult)
                 
             } catch {
-                self.errorMessage = "Failed to Load Data: \(error.localizedDescription)"
-                self.isLoading = false
-                //print(errorMessage)
-                
+                view?.displayError(error.localizedDescription)
+                view?.hideLoading()
+                //print(error.localizedDescription)
             }
         }
     }

@@ -11,16 +11,16 @@ struct CustomToolBarView: View {
     
     @State private var text: String = ""
     
-    var onSearch: (String) -> Void
-    var onLocation: () -> Void
+    private var onSearch: (String) -> Void
+    private var onLocation: () -> Void
     
     //Image
-    var locationIcon = "location.fill"
-    var searchIcon = "magnifyingglass"
+    private var locationIcon = "location.fill"
+    private var searchIcon = "magnifyingglass"
     
     
-    var placeHolder: String = "Search..."
-    var textHolder = "Current Location: ...."
+    private var placeHolder: String = "Search..."
+    private var textHolder = "Current Location: ...."
     
     init(
         onSearch: @escaping (String) -> Void,

@@ -8,9 +8,9 @@
 import Foundation
 
 class WeatherService: WeatherServiceProtocol {
-    private var baseURL: String = Constant.API.baseUrl
-    private var path: String = Constant.API.path
-    private var apiKey = Secrets.apiKey
+    private let baseURL: String = Constant.API.baseUrl
+    private let path: String = Constant.API.path
+    private let apiKey = Secrets.apiKey
     
     func fetchWeathers(lat: Double, lon: Double) async throws -> WeatherDTO {
         let urlString = "\(baseURL)/\(path)?lat=\(lat)&lon=\(lon)&appid=\(apiKey)"

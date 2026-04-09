@@ -11,18 +11,28 @@ struct WeatherViewController: View {
     
     @State var searchText = ""
     
-    @StateObject var presenter = WeatherPresenter(service: WeatherService())
+    @StateObject private var state = WeatherState()
+    
+    private var presenter: WeatherPresenter
+    
+    init() {
+        let service = WeatherService()
+        let presenter = WeatherPresenter(service: service)
+                
+        self.presenter = presenter
+        
+    }
     
     var body: some View {
         NavigationStack {
             ZStack{
                 LinearGradient(colors: [.blue.opacity(0.1), .white], startPoint: .top, endPoint: .bottom)
                 VStack{
-                    if let weather = presenter.weather {
+                    if let weather = state.weather {
                         WeatherInfoView(weather: weather)
                             .transition(.opacity.combined(with: .move(edge: .bottom)))
                     }
-                    else if let error = presenter.errorMessage {
+                    else if let error = state.errorMessage {
                         // Tampilan kalau API error atau internet mati
                         VStack(spacing: 15) {
                             Image(systemName: "wifi.exclamationmark")
@@ -36,17 +46,17 @@ struct WeatherViewController: View {
                             .buttonStyle(.borderedProminent)
                         }
                         .padding()
-                    } else if !presenter.isLoading {
+                    } else if !state.isLoading {
                         ContentUnavailableView("Search City",
                                                systemImage: "magnifyingglass",
                                                description: Text("Start by searching or using your location"))
                     }
                     
                 }
-                .blur(radius: presenter.isLoading ? 3 : 0) 
-                .animation(.easeInOut, value: presenter.isLoading)
+                .blur(radius: state.isLoading ? 3 : 0)
+                .animation(.easeInOut, value: state.isLoading)
                 
-                if presenter.isLoading {
+                if state.isLoading {
                     VStack(spacing: 12) {
                         ProgressView()
                             .scaleEffect(1.2)
@@ -73,7 +83,9 @@ struct WeatherViewController: View {
             }
             .onAppear {
                 // Auto-load data pas pertama kali aplikasi dibuka
-                if presenter.weather == nil {
+                presenter.view = state
+                
+                if state.weather == nil {
                     presenter.fetchData(lat: -6.2088, lon: 106.8456)
                 }
             }
