@@ -1,0 +1,34 @@
+//
+//  NetworkManager.swift
+//  WeatherApi
+//
+//  Created by Kalvin on 17/03/26.
+//
+import Foundation
+
+
+class NetworkManager {
+    static let shared = NetworkManager()
+    private let decoder = JSONDecoder()
+    
+    func loadAPI<T: Decodable>(urlString: String) async throws -> T {
+        
+        guard let url = URL(string: urlString) else {
+            throw URLError(.badURL)
+        }
+        
+        let (data, response) = try await URLSession.shared.data(from: url)
+        //print(data.debugJSON())
+        //print(response)
+        
+        guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+            throw URLError(.badServerResponse)
+        }
+        
+        do {
+            return try decoder.decode(T.self, from: data)
+        } catch {
+            throw error
+        }
+    }
+}
