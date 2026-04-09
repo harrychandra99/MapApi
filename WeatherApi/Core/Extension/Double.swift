@@ -13,3 +13,4 @@ extension Double {
         return "\(celsius)°C"
     }
 }
+

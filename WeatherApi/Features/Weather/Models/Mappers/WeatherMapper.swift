@@ -13,7 +13,7 @@ struct WeatherMapper {
         
         let idCity = dto.id
         let cityName = dto.name
-        let timeZone = dto.timeZone
+        let timeZone = dto.timezone.toLocalTimeString()
         
         let currentTemperature = dto.main.temp.toCelsius()
         let minTemperature = dto.main.tempMin.toCelsius()
@@ -32,6 +32,7 @@ struct WeatherMapper {
         return WeatherEntity(
             id: idWeather,
             cityName: cityName,
+            timezone: timeZone,
             temperatureCurrent: currentTemperature,
             temperatureMin: minTemperature,
             temperatureMax: maxTemperature,

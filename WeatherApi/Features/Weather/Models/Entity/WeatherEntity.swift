@@ -10,6 +10,7 @@ import Foundation
 struct WeatherEntity: Identifiable {
     let id: Int
     let cityName: String
+    let timezone:String
     
     let temperatureCurrent: String
     let temperatureMin: String

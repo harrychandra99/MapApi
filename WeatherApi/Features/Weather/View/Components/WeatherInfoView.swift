@@ -15,6 +15,10 @@ struct WeatherInfoView: View {
                 Text(weather.cityName)
                     .font(.system(size: 34, weight: .medium, design: .rounded))
                 
+                Text(weather.timezone)
+                    .font(.title3)
+                    .foregroundColor(.secondary)
+                
                 Image(systemName: weather.iconCodeWeather)
                     .resizable()
                     .symbolRenderingMode(.multicolor)
@@ -35,10 +39,10 @@ struct WeatherInfoView: View {
             .padding(.top, 40)
             
             HStack(spacing: 40) {
-                Label(weather.temperatureMin, systemImage: "arrow.up")
+                Label(weather.temperatureMin, systemImage: "arrow.down")
                     .font(.title3)
                 
-                Label(weather.temperatureMax, systemImage: "arrow.down")
+                Label(weather.temperatureMax, systemImage: "arrow.up")
                     .font(.title3)
             }
             .fontWeight(.medium)
@@ -58,7 +62,7 @@ struct WeatherInfoView: View {
                 startPoint: .top,
                 endPoint: .bottom
             )
+            .ignoresSafeArea()
         )
-        .ignoresSafeArea()
     }
 }

@@ -45,9 +45,14 @@ class WeatherPresenter: WeatherPresenterProtocol{
                 
                 self.weather = mappedResult
                 self.isLoading = false
+                
+                print(dto)
+                print(mappedResult)
+                
             } catch {
                 self.errorMessage = "Failed to Load Data: \(error.localizedDescription)"
                 self.isLoading = false
+                //print(errorMessage)
                 
             }
         }
