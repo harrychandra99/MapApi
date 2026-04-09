@@ -45,7 +45,7 @@ struct WeatherViewController: View {
                     }
                     
                 }
-                .blur(radius: presenter.isLoading ? 3 : 0) // Efek blur pas lagi loading
+                .blur(radius: presenter.isLoading ? 3 : 0) 
                 .animation(.easeInOut, value: presenter.isLoading)
                 
                 if presenter.isLoading {
@@ -63,14 +63,14 @@ struct WeatherViewController: View {
                     
                 }
             }
-            .navigationTitle("Weather App")
+//            .navigationTitle("Weather App")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     CustomToolBarView(onSearch: {query in
                         self.searchText = query}, onLocation: {presenter.fetchData(lat: -6.2088, lon: 106.8456)
                         }
                     )
-                    .frame(height: 44) // Or remove this line if CustomBarView sizes itself sensibly
+                   
                 }
             }
             .onAppear {
