@@ -14,7 +14,7 @@ class WeatherService: WeatherServiceProtocol {
     
     func fetchWeathers(lat: Double, lon: Double) async throws -> WeatherDTO {
         let urlString = "\(baseURL)/\(path)?lat=\(lat)&lon=\(lon)&appid=\(apiKey)"
-        
-        return try await NetworkManager.shared.request(urlString: urlString)
+        //print(urlString)
+        return try await NetworkManager.shared.loadAPI(urlString: urlString)
     }
 }

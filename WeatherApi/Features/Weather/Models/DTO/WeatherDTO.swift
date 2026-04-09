@@ -10,7 +10,7 @@ struct WeatherDTO: Decodable {
     let coord: CoordDTO
     let weather: [WeatherInfoDTO]
     let main: MainDTO
-    let timeZone: Int
+    let timezone: Int
     let id: Int
     let name: String
 }
@@ -33,10 +33,10 @@ struct MainDTO: Decodable {
     let tempMax: Double
     
     enum CodingKeys: String, CodingKey {
-                case temp
-                case tempMin = "temp_min"
-                case tempMax = "temp_max"
-            }
+        case temp
+        case tempMin = "temp_min"
+        case tempMax = "temp_max"
+    }
 }
 
 

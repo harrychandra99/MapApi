@@ -17,7 +17,6 @@ struct WeatherViewController: View {
         NavigationStack {
             ZStack{
                 LinearGradient(colors: [.blue.opacity(0.1), .white], startPoint: .top, endPoint: .bottom)
-                    .ignoresSafeArea()
                 VStack{
                     if let weather = presenter.weather {
                         WeatherInfoView(weather: weather)
@@ -32,7 +31,6 @@ struct WeatherViewController: View {
                             Text(error)
                                 .multilineTextAlignment(.center)
                             Button("Try Again") {
-                                // Panggil ulang data Jakarta (Contoh)
                                 presenter.fetchData(lat: -6.2, lon: 106.8)
                             }
                             .buttonStyle(.borderedProminent)
