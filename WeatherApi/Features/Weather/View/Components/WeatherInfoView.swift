@@ -8,6 +8,7 @@ import SwiftUI
 
 struct WeatherInfoView: View {
     let weather: WeatherEntity
+    var onSave: () -> Void
     
     var body: some View {
         VStack(spacing: 30) {
@@ -52,6 +53,16 @@ struct WeatherInfoView: View {
                     DetailBox(title: "LATITUDE", value: "\(weather.latitude)")
                     DetailBox(title: "LONGITUDE", value: "\(weather.longtitude)")
                 }
+            }
+            .padding(.horizontal)
+            Spacer()
+            
+            VStack(spacing: 15) {
+                Button("Save Button") {
+                    onSave()
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
             }
             .padding(.horizontal)
             Spacer()

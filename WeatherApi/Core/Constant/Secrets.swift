@@ -6,5 +6,5 @@
 //
 
 enum Secrets {
-    static let apiKey = "97dfebc5b669ff4bbe7a89f206f318a7"
+    static let apiKeyWeather = "97dfebc5b669ff4bbe7a89f206f318a7"
 }

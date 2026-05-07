@@ -9,8 +9,8 @@ import SwiftUI
 
 enum Constant {
     enum API {
-        static let baseUrl = "https://api.openweathermap.org"
-        static let path = "data/2.5/weather"
+        static let baseWeatherURL = "api.openweathermap.org"
+        static let pathWeather = "/data/2.5/weather"
         
     }
     

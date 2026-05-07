@@ -9,7 +9,7 @@ import Foundation
 
 struct WeatherMapper {
     
-    static func map(dto: WeatherDTO) -> WeatherEntity {
+    static func mapWeather(dto: WeatherDTO) -> WeatherEntity {
         
         let idCity = dto.id
         let cityName = dto.name
