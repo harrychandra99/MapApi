@@ -6,53 +6,88 @@
 //
 
 import Foundation
+import Combine
+import SwiftData
 
 @MainActor
-protocol WeatherPresenterProtocol: ObservableObject {
+protocol WeatherViewProtocol: AnyObject {
     
-    var weather: WeatherEntity? {get}
-    
-    var isLoading: Bool { get }
-    var errorMessage: String? { get }
-    
-    func fetchData(lat: Double, lon:Double)
+    func showLoading()
+    func hideLoading()
+    func displayData(_ weather: WeatherEntity)
+    func displayError(_ message: String)
 }
 
 @MainActor
-class WeatherPresenter: WeatherPresenterProtocol{
+class WeatherPresenter{
     
-    @Published var weather: WeatherEntity?
-    
-    @Published var isLoading: Bool = false
-    @Published var errorMessage: String? = nil
-    
+    private let modelContext: ModelContext
+    weak var view: WeatherViewProtocol?
     private let service: WeatherService
+    private let locationManager = LocationManager()
+    private var cancellables = Set<AnyCancellable>()
     
-    init(service: WeatherService) {
+    init(service: WeatherService, modelContext: ModelContext) {
         self.service = service
+        self.modelContext = modelContext
+        setupLocationObserver()
+    }
+    
+    func startLocationRequest() {
+        view?.showLoading()
+        locationManager.requestLocation()
+    }
+    
+    private func setupLocationObserver() {
+        locationManager.$location
+            .compactMap { $0 }
+            .receive(on: DispatchQueue.main)
+            .sink {[weak self] coordinate in
+                self?.fetchData(lat: coordinate.latitude, lon: coordinate.longitude)
+            }
+            .store(in: &cancellables)
+    }
+    
+    func saveToDatabase(apiData: WeatherEntity) {
+        let persistentObject = mapToPersistentEntity(apiData)
+        modelContext.insert(persistentObject)
+        print("Success: Saved \(apiData.cityName) to local database.")
+    }
+    
+    private func mapToPersistentEntity(_ api: WeatherEntity) -> WeatherDayEntity{
+        let dayEntity = WeatherDayEntity(dateTitle: "\(api.cityName) - \(Date().formatted(date: .abbreviated, time: .omitted))")
+        let itemEntity = WeatherItemEntity(
+            titleCity: api.cityName,
+            time: "Current",
+            mainWeather: api.mainWeather,
+            descriptionWeather: api.descriptionWeather,
+            temperature: "\(api.temperatureCurrent)°",
+            temperatureMin: "\(api.temperatureMin)°",
+            temperatureMax: "\(api.temperatureMax)°",
+            latitude: api.latitude,
+            longitude: api.longtitude
+        )
+        
+        dayEntity.items.append(itemEntity)
+        
+        return dayEntity
     }
     
     func fetchData(lat: Double, lon: Double) {
         
-        isLoading = true
-        errorMessage = nil
-        
         Task {
             do {
                 let dto = try await service.fetchWeathers(lat: lat, lon: lon)
+                let mappedResult = WeatherMapper.mapWeather(dto: dto)
                 
-                let mappedResult = WeatherMapper.map(dto: dto)
+                self.saveToDatabase(apiData: mappedResult)
                 
-                self.weather = mappedResult
-                self.isLoading = false
-                
-                print(dto)
-                print(mappedResult)
+                view?.displayData(mappedResult)
+                view?.hideLoading()
                 
             } catch {
-                self.errorMessage = "Failed to Load Data: \(error.localizedDescription)"
-                self.isLoading = false
-                //print(errorMessage)
+                view?.displayError(error.localizedDescription)
+                view?.hideLoading()
                 
             }
         }
