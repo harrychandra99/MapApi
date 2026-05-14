@@ -10,11 +10,11 @@ import Foundation
 struct CityDTO: Decodable, Identifiable {
     let id = UUID()
     let name: String
-    let localNames: LocalNames
+    let localNames: LocalNames?
     let lat: Double
     let lon: Double
     let country: String
-    let state: String
+    let state: String?
     
     enum CodingKeys: String, CodingKey {
         case name, lat, lon, country, state
@@ -23,6 +23,5 @@ struct CityDTO: Decodable, Identifiable {
 }
 
 struct LocalNames: Decodable {
-    let en: String
-    let id: String
+    let en: String?
 }

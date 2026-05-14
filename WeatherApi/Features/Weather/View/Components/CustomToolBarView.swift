@@ -44,6 +44,9 @@ struct CustomToolBarView: View {
             TextField(placeHolder, text: $text)
                 .textFieldStyle(.plain)
                 .autocorrectionDisabled()
+                .onChange(of: text) {
+                    onSearch(text)
+                }
                 .onSubmit {
                     onSearch(text)
                 }

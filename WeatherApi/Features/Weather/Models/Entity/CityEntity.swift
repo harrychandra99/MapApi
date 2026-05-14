@@ -7,11 +7,10 @@
 
 import Foundation
 
-struct CityEntity {
+struct CityEntity: Equatable, Identifiable, Hashable {
     let id: UUID
     let name: String
     let localNameEnglish: String
-    let localNameIndo: String
     let lat: Double
     let lon: Double
     let country: String
