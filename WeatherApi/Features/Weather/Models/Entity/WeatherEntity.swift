@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct WeatherEntity: Identifiable {
+struct WeatherEntity: Identifiable, Equatable {
     let id: Int
     let cityName: String
     let timezone:String
@@ -22,5 +22,5 @@ struct WeatherEntity: Identifiable {
     let iconCodeWeather: String
     
     let latitude: Double
-    let longtitude: Double
+    let longitude: Double
 }

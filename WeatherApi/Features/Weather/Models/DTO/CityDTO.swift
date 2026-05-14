@@ -14,7 +14,7 @@ struct CityDTO: Decodable, Identifiable {
     let lat: Double
     let lon: Double
     let country: String
-    let state: String
+    let state: String?
     
     enum CodingKeys: String, CodingKey {
         case name, lat, lon, country, state

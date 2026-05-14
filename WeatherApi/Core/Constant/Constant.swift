@@ -12,6 +12,7 @@ enum Constant {
         static let baseWeatherURL = "api.openweathermap.org"
         static let pathWeather = "/data/2.5/weather"
         
+        static let pathCity = "/geo/1.0/direct"
     }
     
     enum WeatherIcon: String {

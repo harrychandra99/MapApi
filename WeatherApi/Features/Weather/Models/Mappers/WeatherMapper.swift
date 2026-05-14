@@ -41,7 +41,7 @@ struct WeatherMapper {
             descriptionWeather: descriptionWeather,
             iconCodeWeather: iconCodeWeather,
             latitude: latitude,
-            longtitude: longtitude
+            longitude: longtitude
         )
     }
     

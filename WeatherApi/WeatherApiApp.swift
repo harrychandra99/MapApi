@@ -10,15 +10,28 @@ import SwiftData
 
 @main
 struct WeatherApiApp: App {
-    @Environment(\.modelContext) private var modelContext
-
+    let container: ModelContainer
+    init() {
+        do{
+            container = try ModelContainer(for:WeatherDayEntity.self, WeatherItemEntity.self)
+            
+            SwiftDataManager.shared.modelContext = ModelContext(container)
+        } catch {
+            fatalError("Failed to initialize Modelcontainer")
+        }
+    }
     var body: some Scene {
         WindowGroup {
-            WeatherViewController(modelContext: modelContext)
-//         UIKitViewBridge()
-//                .ignoresSafeArea()
+            WeatherAppLoader()
         }
-        .modelContainer(for: [WeatherDayEntity.self, WeatherItemEntity.self])
+        .modelContainer(container)
+    }
+}
+
+struct WeatherAppLoader: View {
+
+    var body: some View {
+        WeatherViewController().ignoresSafeArea()
     }
 }
 

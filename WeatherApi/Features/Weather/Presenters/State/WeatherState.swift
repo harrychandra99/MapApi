@@ -8,19 +8,31 @@
 import Foundation
 
 class WeatherState: ObservableObject {
-    @Published var weather: WeatherEntity?
-    @Published var isLoading = false
-    @Published var errorMessage: String?
+    @Published var currentState: State = .idle
+    @Published var cityResults: [CityEntity] = []
+}
+
+extension WeatherState {
+    enum State: Equatable {
+        case idle
+        case loading
+        case success(WeatherEntity)
+        case error(String)
+    }
 }
 
 extension WeatherState: WeatherViewProtocol {
-    func showLoading() { isLoading = true }
-    func hideLoading() { isLoading = false }
+    func showLoading() { currentState = .loading }
+    func hideLoading() {}
     func displayData(_ weather: WeatherEntity) {
-        self.weather = weather
-        self.errorMessage = nil
+        currentState = .success(weather)
+        self.cityResults = []
+    }
+    func displayCityResults(_ cities: [CityEntity]) {
+        self.cityResults = cities
     }
     func displayError(_ message: String) {
-        self.errorMessage = message
+        currentState = .error(message)
     }
 }
+

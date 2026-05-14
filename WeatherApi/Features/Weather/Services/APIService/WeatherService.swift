@@ -13,21 +13,20 @@ class WeatherService: WeatherServiceProtocol {
     private let apiKeyWeather = Secrets.apiKeyWeather
     
     func fetchWeathers(lat: Double, lon: Double) async throws -> WeatherDTO {
-        var components = URLComponents()
-        
-        components.scheme = "https"
-        components.host = baseURLWeather
-        components.path = pathWeather
-        components.queryItems = [
+        let queries = [
             URLQueryItem(name: "lat", value: "\(lat)"),
             URLQueryItem(name: "lon", value: "\(lon)"),
-            URLQueryItem(name: "apiKey", value: apiKeyWeather)
+//            URLQueryItem(name: "units", value: "metric")
         ]
-        
-        guard let url = components.url else {
-            throw URLError(.badURL)
-        }
-
-        return try await NetworkManager.shared.loadAPI(url: url)
+        return try await URLBuilder.build(path: Constant.API.pathWeather, queryItems: queries)
     }
+    
+    func fetchCityCoordinates(city: String) async throws -> [CityDTO] {
+        let queries = [
+            URLQueryItem(name: "q", value: city),
+            URLQueryItem(name: "limit", value: "5")
+        ]
+        return try await URLBuilder.build(path: Constant.API.pathCity, queryItems: queries)
+    }
+    
 }

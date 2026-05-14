@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CityEntity {
+struct CityEntity: Equatable {
     let id: UUID
     let name: String
     let localNameEnglish: String

@@ -17,7 +17,7 @@ struct CityMapper {
         let lat: Double = dto.lat
         let lon: Double = dto.lon
         let country: String = dto.country
-        let state: String = dto.state
+        let state: String = dto.state ?? ""
         
         return CityEntity (id: id,
                            name: cityName,

@@ -15,6 +15,7 @@ protocol WeatherViewProtocol: AnyObject {
     func showLoading()
     func hideLoading()
     func displayData(_ weather: WeatherEntity)
+    func displayCityResults(_ cities: [CityEntity])
     func displayError(_ message: String)
 }
 
@@ -26,6 +27,7 @@ class WeatherPresenter{
     private let service: WeatherService
     private let locationManager = LocationManager()
     private var cancellables = Set<AnyCancellable>()
+    private var searchTask: Task<Void, Never>?
     
     init(service: WeatherService, modelContext: ModelContext) {
         self.service = service
@@ -43,39 +45,21 @@ class WeatherPresenter{
             .compactMap { $0 }
             .receive(on: DispatchQueue.main)
             .sink {[weak self] coordinate in
-                self?.fetchData(lat: coordinate.latitude, lon: coordinate.longitude)
+                self?.fetchDataWeather(lat: coordinate.latitude, lon: coordinate.longitude)
             }
             .store(in: &cancellables)
     }
     
     func saveToDatabase(apiData: WeatherEntity) {
-        let persistentObject = mapToPersistentEntity(apiData)
-        modelContext.insert(persistentObject)
-        print("Success: Saved \(apiData.cityName) to local database.")
+        SwiftDataManager.shared.saveToDatabase(input: apiData, as: WeatherDayEntity.self)
     }
     
-    private func mapToPersistentEntity(_ api: WeatherEntity) -> WeatherDayEntity{
-        let dayEntity = WeatherDayEntity(dateTitle: "\(api.cityName) - \(Date().formatted(date: .abbreviated, time: .omitted))")
-        let itemEntity = WeatherItemEntity(
-            titleCity: api.cityName,
-            time: "Current",
-            mainWeather: api.mainWeather,
-            descriptionWeather: api.descriptionWeather,
-            temperature: "\(api.temperatureCurrent)°",
-            temperatureMin: "\(api.temperatureMin)°",
-            temperatureMax: "\(api.temperatureMax)°",
-            latitude: api.latitude,
-            longitude: api.longtitude
-        )
-        
-        dayEntity.items.append(itemEntity)
-        
-        return dayEntity
-    }
-    
-    func fetchData(lat: Double, lon: Double) {
+    func fetchDataWeather(lat: Double, lon: Double) {
         
         Task {
+            
+            view?.showLoading()
+            
             do {
                 let dto = try await service.fetchWeathers(lat: lat, lon: lon)
                 let mappedResult = WeatherMapper.mapWeather(dto: dto)
@@ -92,4 +76,36 @@ class WeatherPresenter{
             }
         }
     }
+    
+    func searchCity(name: String) {
+        let cleanName = name.trimmingCharacters(in: .whitespaces)
+        searchTask?.cancel()
+        
+        if cleanName.count <= 2 {
+            view?.displayCityResults([])
+            return
+        }
+        
+        searchTask = Task {
+            do {
+                try? await Task.sleep(nanoseconds: 500_000_000)
+                
+                if Task.isCancelled { return }
+                
+                let cityDTOs = try await service.fetchCityCoordinates(city: cleanName)
+                let cityEntities = cityDTOs.map { CityMapper.mapCity(dto: $0) }
+                
+                if !Task.isCancelled {
+                    view?.displayCityResults(cityEntities)
+                }
+            } catch is CancellationError {
+                
+            } catch{
+                view?.displayError(error.localizedDescription)
+            }
+        }
+    }
 }
+
+
+
