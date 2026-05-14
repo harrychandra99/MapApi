@@ -131,7 +131,7 @@ extension WeatherViewController {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(spacing: 0) {
-                    ForEach(state.cityResults, id: \.lat) { city in
+                    ForEach(state.cityResults, id: \.self) { city in
                         Button {
                             presenter.fetchDataWeather(lat: city.lat, lon: city.lon)
                             state.cityResults = []

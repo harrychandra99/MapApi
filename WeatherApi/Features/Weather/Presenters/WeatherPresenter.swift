@@ -27,6 +27,7 @@ class WeatherPresenter{
     private let service: WeatherService
     private let locationManager = LocationManager()
     private var cancellables = Set<AnyCancellable>()
+    
     private var searchTask: Task<Void, Never>?
     
     init(service: WeatherService, modelContext: ModelContext) {
@@ -64,7 +65,7 @@ class WeatherPresenter{
                 let dto = try await service.fetchWeathers(lat: lat, lon: lon)
                 let mappedResult = WeatherMapper.mapWeather(dto: dto)
                 
-                self.saveToDatabase(apiData: mappedResult)
+//                self.saveToDatabase(apiData: mappedResult)
                 
                 view?.displayData(mappedResult)
                 view?.hideLoading()
@@ -88,19 +89,21 @@ class WeatherPresenter{
         
         searchTask = Task {
             do {
-                try? await Task.sleep(nanoseconds: 500_000_000)
-                
+                try await Task.sleep(nanoseconds: 300_000_000)
                 if Task.isCancelled { return }
                 
                 let cityDTOs = try await service.fetchCityCoordinates(city: cleanName)
-                let cityEntities = cityDTOs.map { CityMapper.mapCity(dto: $0) }
+                print("🔍 API Response: Berhasil ambil \(cityDTOs.count) kota untuk keyword: \(cleanName)")
+                
+                let cityEntities = cityDTOs.map { CityMapper.mapCity(dto: $0)}
+                print("✅ Mapping: Berhasil mengubah ke \(cityEntities.count) Entities")
                 
                 if !Task.isCancelled {
                     view?.displayCityResults(cityEntities)
                 }
-            } catch is CancellationError {
-                
             } catch{
+                if error is CancellationError{ return }
+                
                 view?.displayError(error.localizedDescription)
             }
         }
