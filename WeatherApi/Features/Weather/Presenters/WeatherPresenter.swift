@@ -52,6 +52,7 @@ class WeatherPresenter{
     }
     
     func saveToDatabase(apiData: WeatherEntity) {
+        
         SwiftDataManager.shared.saveToDatabase(input: apiData, as: WeatherDayEntity.self)
     }
     
@@ -65,7 +66,7 @@ class WeatherPresenter{
                 let dto = try await service.fetchWeathers(lat: lat, lon: lon)
                 let mappedResult = WeatherMapper.mapWeather(dto: dto)
                 
-//                self.saveToDatabase(apiData: mappedResult)
+                self.saveToDatabase(apiData: mappedResult)
                 
                 view?.displayData(mappedResult)
                 view?.hideLoading()
@@ -93,10 +94,8 @@ class WeatherPresenter{
                 if Task.isCancelled { return }
                 
                 let cityDTOs = try await service.fetchCityCoordinates(city: cleanName)
-                print("🔍 API Response: Berhasil ambil \(cityDTOs.count) kota untuk keyword: \(cleanName)")
                 
                 let cityEntities = cityDTOs.map { CityMapper.mapCity(dto: $0)}
-                print("✅ Mapping: Berhasil mengubah ke \(cityEntities.count) Entities")
                 
                 if !Task.isCancelled {
                     view?.displayCityResults(cityEntities)

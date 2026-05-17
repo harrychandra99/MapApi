@@ -12,6 +12,7 @@ struct WeatherViewController: View {
     
     @State var searchText = ""
     @State private var showSaveAlert = false
+    @State private var isShowingHistory = false
     @StateObject private var state = WeatherState()
     private var presenter: WeatherPresenter
     
@@ -53,6 +54,9 @@ struct WeatherViewController: View {
                             self.searchText = query},
                         onLocation: {
                             presenter.startLocationRequest()
+                        },
+                        onHistory: {
+                            self.isShowingHistory = true
                         }
                     )
                     .frame(width: UIScreen.main.bounds.width * 0.9)
@@ -63,7 +67,6 @@ struct WeatherViewController: View {
                     state.cityResults = []
                 } else {
                     presenter.searchCity(name: newValue)
-                    print(newValue)
                 }
             })
             .onAppear {
@@ -75,6 +78,13 @@ struct WeatherViewController: View {
                 Button("OK", role: .cancel) { }
             } message: {
                 Text("Weather data has been added to your saved data.")
+            }
+            .sheet(isPresented: $isShowingHistory) {
+                NavigationStack{
+                    WeatherHistoryRepresentable()
+                        .ignoresSafeArea()
+                }
+                
             }
         }
     }
@@ -140,7 +150,7 @@ extension WeatherViewController {
                             HStack {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(city.name).fontWeight(.bold).foregroundColor(.primary)
-                                    Text("\(city.state ?? ""), \(city.country)").font(.caption).foregroundColor(.secondary)
+                                    Text("\(city.state), \(city.country)").font(.caption).foregroundColor(.secondary)
                                 }
                                 Spacer()
                                 Image(systemName: "mappin.and.ellipse").foregroundColor(.blue)

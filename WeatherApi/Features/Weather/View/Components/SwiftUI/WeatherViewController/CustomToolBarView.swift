@@ -13,10 +13,12 @@ struct CustomToolBarView: View {
     
     private var onSearch: (String) -> Void
     private var onLocation: () -> Void
+    private var onHistory: () -> Void
     
     //Image
     private var locationIcon = "location.fill"
     private var searchIcon = "magnifyingglass"
+    private var historyIcon = "clock.arrow.circlepath"
     
     
     private var placeHolder: String = "Search..."
@@ -24,12 +26,13 @@ struct CustomToolBarView: View {
     
     init(
         onSearch: @escaping (String) -> Void,
-        onLocation: @escaping () -> Void
+        onLocation: @escaping () -> Void,
+        onHistory: @escaping () -> Void
     ) {
         self.onSearch = onSearch
         self.onLocation = onLocation
+        self.onHistory = onHistory
     }
-    
     
     var body: some View {
         HStack {
@@ -58,9 +61,18 @@ struct CustomToolBarView: View {
                     .font(.title2)
                     .foregroundColor(.blue)
             }
+            
+            Button(action: {
+                onHistory()
+            }) {
+                Image(systemName: historyIcon)
+                    .font(.title2)
+                    .foregroundColor(.blue)
+            }
         }
-        .padding(10)
-        .background(.ultraThinMaterial) // Efek glassmorphism 2025
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(.ultraThinMaterial)
         .cornerRadius(12)
         .animation(.snappy, value: text)
     }
