@@ -61,6 +61,7 @@ struct CustomToolBarView: View {
                     .font(.title2)
                     .foregroundColor(.blue)
             }
+            .buttonStyle(.plain)
             
             Button(action: {
                 onHistory()

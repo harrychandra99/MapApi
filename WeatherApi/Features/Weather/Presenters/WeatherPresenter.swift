@@ -95,6 +95,14 @@ class WeatherPresenter{
                 
                 let cityDTOs = try await service.fetchCityCoordinates(city: cleanName)
                 
+                if cityDTOs.isEmpty {
+                              
+                                view?.displayCityResults([])
+                             
+                                view?.displayError("City '\(cleanName)' not found. Please try another name.")
+                                return
+                            }
+                
                 let cityEntities = cityDTOs.map { CityMapper.mapCity(dto: $0)}
                 
                 if !Task.isCancelled {
