@@ -57,7 +57,7 @@ extension WeatherDayEntity: DataMappable {
         
         let itemEntity = WeatherItemEntity(
             titleCity: api.cityName,
-            time: "Current",
+            time: Date().toLocalTimeString(),
             mainWeather: api.mainWeather,
             descriptionWeather: api.descriptionWeather,
             temperature: "\(api.temperatureCurrent)°",
